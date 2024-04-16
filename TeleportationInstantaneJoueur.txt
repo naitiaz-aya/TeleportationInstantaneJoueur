@@ -1,0 +1,334 @@
+using { /UnrealEngine.com/Temporary/SpatialMath }
+using { /Fortnite.com/Devices }
+using { /Fortnite.com/Playspaces }
+using { /Fortnite.com/Characters }
+using { /Verse.org/Simulation }
+using { /UnrealEngine.com/Temporary/Diagnostics }
+using { /Verse.org/Random }
+using {/Fortnite.com/Game}
+using {/Fortnite.com/FortPlayerUtilities}
+using {/Fortnite.com/Teams}
+# See https://dev.epicgames.com/documentation/en-us/uefn/create-your-own-device-in-verse for how to create a verse device.
+
+# A Verse-authored creative device that can be placed in a level
+TapInDevice := class(creative_device):
+    @editable
+    SwitchDevice1:switch_device = switch_device{}
+    @editable
+    SwitchDevice2:switch_device = switch_device{}
+    @editable
+    SwitchDevice3:switch_device = switch_device{}
+    @editable 
+    SwitchDevice4:switch_device = switch_device{}
+    @editable 
+    TeleporterZoneWarsVertePl1:teleporter_device = teleporter_device{}
+    @editable 
+    TeleporterZoneWarsVertePl2:teleporter_device = teleporter_device{}
+    @editable 
+    TeleporterZoneWarsDesertPl1:teleporter_device = teleporter_device{}
+    @editable 
+    TeleporterZoneWarsDesertPl2:teleporter_device = teleporter_device{}
+    @editable 
+    TeleporterRealisticDesertPl1:teleporter_device = teleporter_device{}
+    @editable 
+    TeleporterRealisticDesertPl2:teleporter_device = teleporter_device{}
+    @editable 
+    TeleporterRealisticVertePl1:teleporter_device = teleporter_device{}
+    @editable 
+    TeleporterRealisticVertePl2:teleporter_device = teleporter_device{}
+    @editable 
+    TeleporterBOXFIGHTPl1:teleporter_device = teleporter_device{}
+    @editable 
+    TeleporterBOXFIGHTPl2:teleporter_device = teleporter_device{}
+    @editable 
+    TeleporterBOXFIGHT2Pl1:teleporter_device = teleporter_device{}
+    @editable 
+    TeleporterBOXFIGHT2Pl2:teleporter_device = teleporter_device{}
+    @editable 
+    TeleporterBOXFIGHT3Pl1:teleporter_device = teleporter_device{}
+    @editable 
+    TeleporterBOXFIGHT3Pl2:teleporter_device = teleporter_device{}
+    @editable 
+    TeleporterBFPl1:teleporter_device = teleporter_device{}
+    @editable 
+    TeleporterBFPl2:teleporter_device = teleporter_device{}
+    @editable 
+    TeleporterBF2Pl1:teleporter_device = teleporter_device{}
+    @editable 
+    TeleporterBF2Pl2:teleporter_device = teleporter_device{}
+    @editable 
+    TeleporterBF1V1Pl1:teleporter_device = teleporter_device{}
+    @editable 
+    TeleporterBF1V1Pl2:teleporter_device = teleporter_device{}
+    @editable
+    ElimMachine : elimination_manager_device = elimination_manager_device{}
+    var ZoneWarsVerte : []teleporter_device = array{}
+    var ZoneWarsDesert: []teleporter_device = array{}
+    var RealisticVerte : []teleporter_device = array{}
+    var RealisticDesert : []teleporter_device = array{}
+    var BOXFIGHT : []teleporter_device = array{}
+    var BOXFIGHT2 : []teleporter_device = array{}
+    var BOXFIGHT3 : []teleporter_device = array{}
+    var BF : []teleporter_device = array{}
+    var BF2 : []teleporter_device = array{}
+    var BF1V1 : []teleporter_device = array{}
+    var Ile: [][]teleporter_device = array{}
+    var In: int = 1
+
+    @editable
+    var Button1 : button_device = button_device{}
+    # Runs when the device is started in a running game
+    OnBegin<override>()<suspends>:void=
+        # TODO: Replace this with your code
+        SwitchDevice1.StateChangesEvent.Subscribe(OnStateChanged1)
+        SwitchDevice2.StateChangesEvent.Subscribe(OnStateChanged2)
+        SwitchDevice3.StateChangesEvent.Subscribe(OnStateChanged3)
+        SwitchDevice4.StateChangesEvent.Subscribe(OnStateChanged4)
+        Button1.InteractedWithEvent.Subscribe(SwitchDeviceButton)
+        ElimMachine.EliminatedEvent.Subscribe(SelfEliminated)
+        set ZoneWarsVerte = AddElementIle(TeleporterZoneWarsVertePl1, ZoneWarsVerte)
+        set ZoneWarsVerte = AddElementIle(TeleporterZoneWarsVertePl2, ZoneWarsVerte)
+        set ZoneWarsDesert = AddElementIle(TeleporterZoneWarsDesertPl1, ZoneWarsDesert)
+        set ZoneWarsDesert = AddElementIle(TeleporterZoneWarsDesertPl2, ZoneWarsDesert)
+        set RealisticVerte = AddElementIle(TeleporterRealisticVertePl1, RealisticVerte)
+        set RealisticVerte = AddElementIle(TeleporterRealisticVertePl2, RealisticVerte)
+        set RealisticDesert = AddElementIle(TeleporterRealisticDesertPl1, RealisticDesert)
+        set RealisticDesert = AddElementIle(TeleporterRealisticDesertPl2, RealisticDesert)
+        set BOXFIGHT = AddElementIle(TeleporterBOXFIGHTPl1, BOXFIGHT)
+        set BOXFIGHT = AddElementIle(TeleporterBOXFIGHTPl2, BOXFIGHT)
+        set BOXFIGHT2 = AddElementIle(TeleporterBOXFIGHT2Pl1, BOXFIGHT2)
+        set BOXFIGHT2 = AddElementIle(TeleporterBOXFIGHT2Pl2, BOXFIGHT2)
+        set BOXFIGHT3 = AddElementIle(TeleporterBOXFIGHT3Pl1, BOXFIGHT3)
+        set BOXFIGHT3 = AddElementIle(TeleporterBOXFIGHT3Pl2, BOXFIGHT3)
+        set BF = AddElementIle(TeleporterBFPl1, BF)
+        set BF = AddElementIle(TeleporterBFPl2, BF)
+        set BF2 = AddElementIle(TeleporterBF2Pl1, BF2)
+        set BF2 = AddElementIle(TeleporterBF2Pl2, BF2)
+        set BF1V1 = AddElementIle(TeleporterBF1V1Pl1, BF1V1)
+        set BF1V1 = AddElementIle(TeleporterBF1V1Pl2, BF1V1)
+
+    NowRespawn(AgentEliminated: agent)<suspends>:void=
+        # Retrieve all players.
+        AllPlayers := GetPlayspace().GetPlayers()
+        Sleep(0.01)
+        # Ensure In is within the bounds of the Ile array.
+        if (In < Ile.Length):
+            # Determine the eliminated player and the survivor.
+            if(AgentEliminated = AllPlayers[1]): 
+                Print("AgentEliminated = AllPlayers[1]")
+                if(PlayerSurvivor := AllPlayers[0]):
+                    
+                    if (TeleporterEliminated := Ile[In][0]): 
+                        PosEliminated := TeleporterEliminated.GetTransform()
+                        Print("PosEliminated {In} ")
+                        AgentEliminated.Respawn(PosEliminated.Translation, PosEliminated.Rotation)
+                        Print("Teleportation du joueur Eliminated à {PosEliminated.Translation.Y}") 
+                    if (TeleporterSurvivor := Ile[In][1]): 
+                        PosSurvivor := TeleporterSurvivor.GetTransform()
+                        Print("PosSurvivor {In} ")
+                        # PlayerSurvivor.Respawn(PosSurvivor.Translation, PosSurvivor.Rotation)
+                        TeleporterSurvivor.Teleport(PlayerSurvivor)
+                        Print("Teleportation du joueur survivant à {PosSurvivor.Translation.Y}")
+            if(AgentEliminated = AllPlayers[0]):
+                Print("AgentEliminated = AllPlayers[0]")
+                if(PlayerSurvivor := AllPlayers[1] ):
+                    if (TeleporterEliminated := Ile[In][0]): 
+                        Print("PosEliminated {In} ")
+                        PosEliminated := TeleporterEliminated.GetTransform()
+                        AgentEliminated.Respawn(PosEliminated.Translation, PosEliminated.Rotation)
+                        Print("Teleportation du joueur Eliminated à {PosEliminated.Translation.Y}") 
+                        if (TeleporterSurvivor := Ile[In][1]): 
+                            Print("PosSurvivor {In} ")
+                            PosSurvivor := TeleporterSurvivor.GetTransform()
+                            # PlayerSurvivor.Respawn(PosSurvivor.Translation, PosSurvivor.Rotation)
+                            TeleporterSurvivor.Teleport(PlayerSurvivor)
+                            Print("Teleportation du joueur survivant à {PosSurvivor.Translation.Y}")
+            set In += 1
+            if(In = Ile.Length  ):
+                set In = 0  
+
+    SelfEliminated(Agent:agent):void=
+        spawn{NowRespawn(Agent)}
+
+    
+    SwitchDeviceButton(Agent:agent):void =
+    
+        shuffeld:[][]teleporter_device =Shuffle(Ile)
+        set Ile = shuffeld
+        for(j := 0 .. shuffeld.Length-1):
+            for (Teleporter : shuffeld[j]):
+                Position := Teleporter.GetTransform().Translation
+                Print("After click : {Position.Y}")
+        Print("Now total shuffeld teleporters : {shuffeld.Length}")
+            
+        
+            if (Ile.Length > 0):
+                AllPlayers := GetPlayspace().GetPlayers()
+                if (Teleporter := Ile[0][0]): 
+                    if(Player1 := AllPlayers[0]):
+                        Teleporter.Teleport(Player1)
+                        Position := Teleporter.GetTransform().Translation
+                        Print("Tel 1 : {Position.Y}")
+                if (Teleporter := Ile[0][1]): 
+                    if(Player2 := AllPlayers[1]):
+                        Teleporter.Teleport(Player2)
+
+            Print("Player has been teleported successfully")
+
+    OnStateChanged1():void=
+
+        if (SwitchDevice1.GetCurrentState[]):
+            Print("Mode Zone Wars choisi")
+
+            TeleporterZoneWarsVertePl1.Enable()
+            TeleporterZoneWarsVertePl2.Enable()
+            TeleporterZoneWarsDesertPl1.Enable()
+            TeleporterZoneWarsDesertPl2.Enable()
+            
+            var Ilechoisi :[][]teleporter_device= {ZoneWarsVerte, ZoneWarsDesert}
+            for(j := 0 .. Ilechoisi.Length-1):
+                for (Teleporter : Ilechoisi[j]):
+                    Position := Teleporter.GetTransform().Translation
+                    Print("bf : {Position.Y}")
+            # Shuffle the array and update Ilechoisi
+            shuffeld := Shuffle(Ilechoisi)
+            
+            for(j := 0 .. shuffeld.Length-1):
+                for (Teleporter : shuffeld[j]):
+                    Position := Teleporter.GetTransform().Translation
+                    Print("After : {Position.Y}")
+            Print("Now total shuffeld teleporters : {shuffeld.Length}")
+            if(Ileran := shuffeld[0]): 
+                AddArray(Ileran)
+            else:
+            Print("Mode Zone Wars  n'est pas choisie.")
+            
+            TeleporterZoneWarsVertePl1.Disable()
+            TeleporterZoneWarsVertePl2.Disable()
+            TeleporterZoneWarsDesertPl1.Disable()
+            TeleporterZoneWarsDesertPl2.Disable()
+            
+            if (NewArray := Ile.RemoveElement[Ile.Length-1]):
+                set Ile = NewArray
+    OnStateChanged2():void=
+        
+        if (SwitchDevice1.GetCurrentState[]):
+            Print("Mode Realistic choisi")
+            TeleporterRealisticDesertPl1.Enable()
+            TeleporterRealisticDesertPl2.Enable()
+            TeleporterRealisticVertePl1.Enable()
+            TeleporterRealisticVertePl2.Enable()
+            
+            var Ilechoisi :[][]teleporter_device= {RealisticVerte, RealisticDesert}
+            for(j := 0 .. Ilechoisi.Length-1):
+                for (Teleporter : Ilechoisi[j]):
+                    Position := Teleporter.GetTransform().Translation
+                    Print("bf : {Position.Y}")
+            # Shuffle the array and update Ilechoisi
+            shuffeld := Shuffle(Ilechoisi)
+            
+            for(j := 0 .. shuffeld.Length-1):
+                for (Teleporter : shuffeld[j]):
+                    Position := Teleporter.GetTransform().Translation
+                    Print("After : {Position.Y}")
+            Print("Now total shuffeld teleporters : {shuffeld.Length}")
+            if(Ileran := shuffeld[0]): 
+                AddArray(Ileran)
+        else:
+            Print("Mode Realistic  n'est pas choisie.")
+            
+            TeleporterRealisticDesertPl1.Disable()
+            TeleporterRealisticDesertPl2.Disable()
+            TeleporterRealisticVertePl1.Disable()
+            TeleporterRealisticVertePl2.Disable()
+            
+            if (NewArray := Ile.RemoveElement[Ile.Length-1]):
+                set Ile = NewArray
+    OnStateChanged3():void=
+        if (SwitchDevice1.GetCurrentState[]):
+            Print("Mode BoxFight choisi")
+
+            TeleporterBOXFIGHTPl1.Enable()
+            TeleporterBOXFIGHTPl2.Enable()
+            TeleporterBOXFIGHT2Pl1.Enable()
+            TeleporterBOXFIGHT2Pl2.Enable()
+            TeleporterBOXFIGHT3Pl1.Enable()
+            TeleporterBOXFIGHT3Pl2.Enable()
+            
+            var Ilechoisi :[][]teleporter_device= {BOXFIGHT, BOXFIGHT2,BOXFIGHT3}
+            for(j := 0 .. Ilechoisi.Length-1):
+                for (Teleporter : Ilechoisi[j]):
+                    Position := Teleporter.GetTransform().Translation
+                    Print("bf : {Position.Y}")
+            # Shuffle the array and update Ilechoisi
+            shuffeld := Shuffle(Ilechoisi)
+            
+            for(j := 0 .. shuffeld.Length-1):
+                for (Teleporter : shuffeld[j]):
+                    Position := Teleporter.GetTransform().Translation
+                    Print("After : {Position.Y}")
+            Print("Now total shuffeld teleporters : {shuffeld.Length}")
+            if(Ileran := shuffeld[0]): 
+                AddArray(Ileran)
+        else:
+            Print("Mode BoxFight  n'est pas choisie.")
+            
+            TeleporterBOXFIGHTPl1.Disable()
+            TeleporterBOXFIGHTPl2.Disable()
+            TeleporterBOXFIGHT2Pl1.Disable()
+            TeleporterBOXFIGHT2Pl2.Disable()
+            TeleporterBOXFIGHT3Pl1.Disable()
+            TeleporterBOXFIGHT3Pl2.Disable()
+            
+            if (NewArray := Ile.RemoveElement[Ile.Length-1]):
+                set Ile = NewArray
+    OnStateChanged4():void=
+        if (SwitchDevice1.GetCurrentState[]):
+            Print("Mode Build Fight choisi")
+    
+            TeleporterBFPl1.Enable()
+            TeleporterBFPl2.Enable()
+            TeleporterBF2Pl1.Enable()
+            TeleporterBF2Pl2.Enable()
+            TeleporterBF1V1Pl1.Enable()
+            TeleporterBF1V1Pl2.Enable()
+            
+            var Ilechoisi :[][]teleporter_device= {BF, BF2,BF1V1}
+            for(j := 0 .. Ilechoisi.Length-1):
+                for (Teleporter : Ilechoisi[j]):
+                    Position := Teleporter.GetTransform().Translation
+                    Print("bf : {Position.Y}")
+            # Shuffle the array and update Ilechoisi
+            shuffeld := Shuffle(Ilechoisi)
+            
+            for(j := 0 .. shuffeld.Length-1):
+                for (Teleporter : shuffeld[j]):
+                    Position := Teleporter.GetTransform().Translation
+                    Print("After : {Position.Y}")
+            Print("Now total shuffeld teleporters : {shuffeld.Length}")
+            if(Ileran := shuffeld[0]): 
+                AddArray(Ileran)
+        else:
+            Print("Mode Build Fight  n'est pas choisie.")
+            
+            TeleporterBFPl1.Disable()
+            TeleporterBFPl2.Disable()
+            TeleporterBF2Pl1.Disable()
+            TeleporterBF2Pl2.Disable()
+            TeleporterBF1V1Pl1.Disable()
+            TeleporterBF1V1Pl2.Disable()
+            
+            if (NewArray := Ile.RemoveElement[Ile.Length-1]):
+                set Ile = NewArray
+    
+
+    AddElementIle(NewElement : teleporter_device, IleT:[]teleporter_device):[]teleporter_device=
+        # Concatenate the new element with the existing array
+        UpdatedIleT := IleT + array{NewElement}
+        
+        # Return the updated array
+        return UpdatedIleT
+    AddArray(Ar: []teleporter_device):void=
+        # Add the new element to the array
+        set Ile  += array{Ar}
+        Print("Total teleporters: {Ile.Length}")
